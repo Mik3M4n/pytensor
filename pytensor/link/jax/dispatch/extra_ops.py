@@ -12,6 +12,7 @@ from pytensor.tensor.extra_ops import (
     Repeat,
     Unique,
     UnravelIndex,
+    SearchsortedOp
 )
 
 
@@ -108,6 +109,13 @@ def jax_funcify_FillDiagonal(op, **kwargs):
 
     return filldiagonal
 
+@jax_funcify.register(SearchsortedOp)
+def jax_funcify_Searchsorted(op, node, **kwargs):
+    side = op.side
+
+    def searchsorted(a, v):
+        return jnp.searchsorted(a, v, side)
+    return searchsorted
 
 @jax_funcify.register(FillDiagonalOffset)
 def jax_funcify_FillDiagonalOffset(op, **kwargs):
